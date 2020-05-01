@@ -1,0 +1,23 @@
+# H2
+# Datasource 
+# ~/test - c:/Users/username/test.mv.db
+# ./gagan - gagan.mv.db in root directory om application
+# ;DB_CLOSE_ON_EXIT=FALSE - Save data after app shuts down
+spring:
+    datasource:
+        url: jdbc:mysql://localhost:3306/mydb
+        # Default username
+        username: root
+        # default Password
+        password: 123456
+
+    jpa: 
+      hibernate:
+        ddl-auto: update
+
+#         spring.datasource.password=123456
+# spring.datasource.username=root
+# spring.datasource.url=jdbc:mysql://localhost:3306/shoppingcart2lab
+# #spring.datasource.driver-class-name=com.mysql.jdbc.Driver
+# spring.jpa.show-sql=true
+# spring.jpa.hibernate.ddl-auto=update
