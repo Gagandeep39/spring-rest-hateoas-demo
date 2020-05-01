@@ -1,12 +1,19 @@
 package com.gagan.springhateoasdemo.controller;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.gagan.springhateoasdemo.exception.EmployeeNotFoundException;
+import com.gagan.springhateoasdemo.helper.EmployeeModelAssembler;
 import com.gagan.springhateoasdemo.model.Employee;
 import com.gagan.springhateoasdemo.repository.EmployeeRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,11 +26,19 @@ import org.springframework.web.bind.annotation.RestController;
 public class EmployeeController {
 
     @Autowired
-    EmployeeRepository repository;
+    private EmployeeRepository repository;
+
+    @Autowired
+    private EmployeeModelAssembler assembler;
 
     @GetMapping("/employees")
-    public List<Employee> all() {
-        return repository.findAll();
+    public CollectionModel<EntityModel<Employee>> all() {
+        List<EntityModel<Employee>> employees = repository.findAll()
+        .stream()
+        .map(assembler::toModel)
+        .collect(Collectors.toList());
+        return new CollectionModel<>(employees, 
+        linkTo(methodOn(EmployeeController.class).all()).withSelfRel());
     }
 
     @PostMapping("/employees")
@@ -31,12 +46,10 @@ public class EmployeeController {
         return repository.save(newEmployee);
     }
 
-    // Single item
-
     @GetMapping("/employees/{id}")
-    public Employee one(@PathVariable Long id) {
-
-        return repository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
+    public EntityModel<Employee> one(@PathVariable Long id) {
+        Employee employee = repository.findById(id).orElseThrow(() -> new EmployeeNotFoundException(id));
+        return assembler.toModel(employee);
     }
 
     @PutMapping("/employees/{id}")

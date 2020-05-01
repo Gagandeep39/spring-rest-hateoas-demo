@@ -2,10 +2,24 @@ GET http://localhost:8080/employees
 
 ###
 
+GET http://localhost:8080/employees/43
+
+###
+
 POST http://localhost:8080/employees
 Content-Type: application/json
 
 {
     "name": "Gagandeep",
     "role": "developer"
+}
+
+###
+
+PUT http://localhost:8080/employees/43
+Content-Type: application/json
+
+{
+    "name": "Gagandeep",
+    "role": "Manager"
 }
